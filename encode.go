@@ -6,6 +6,7 @@ import (
 	"encoding/binary"
 	"errors"
 	"io"
+	"math/big"
 	"reflect"
 	"sort"
 	"strconv"
@@ -32,6 +33,14 @@ func (e *Encoder) Encode(v interface{}) error {
 }
 
 func (e *Encoder) encode(rv reflect.Value, enumVariants map[reflect.Type]EnumKeyType, fixedLen int) (err error) {
+	// encoding u128.
+	if rv.Type() == reflect.TypeOf(big.Int{}) {
+		val := rv.Interface().(*big.Int)
+		bz := BigToBytes(val, 16)
+		err := binary.Write(e.w, binary.LittleEndian, bz)
+		return err
+	}
+
 	// rv = indirect(rv)
 	switch rv.Kind() {
 	case reflect.Bool,

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math/big"
 	"reflect"
 	"strconv"
 )
@@ -39,6 +40,20 @@ func (d *Decoder) EOF() bool {
 }
 
 func (d *Decoder) decode(rv reflect.Value, enumVariants map[EnumKeyType]reflect.Type, fixedLen int) (err error) {
+	if rv.Type() == reflect.TypeOf(big.Int{}) {
+		bz := make([]byte, 16)
+		if err := binary.Read(d.r, binary.LittleEndian, bz); err != nil {
+			return err
+		}
+		LeToBig(bz)
+		bigVal := &big.Int{}
+		bigVal.SetBytes(bz)
+
+		rv.Set(reflect.ValueOf(bigVal))
+
+		return nil
+	}
+
 	switch rv.Kind() {
 	case reflect.Bool:
 		if !rv.CanSet() {
