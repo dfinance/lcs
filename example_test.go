@@ -4,7 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/the729/lcs"
+	"github.com/dfinance/lcs"
 )
 
 func ExampleMarshal_struct() {

@@ -46,7 +46,7 @@ func (d *Decoder) decode(rv reflect.Value, enumVariants map[EnumKeyType]reflect.
 			return err
 		}
 		LeToBig(bz)
-		bigVal := &big.Int{}
+		bigVal := big.Int{}
 		bigVal.SetBytes(bz)
 
 		rv.Set(reflect.ValueOf(bigVal))
